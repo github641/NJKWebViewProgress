@@ -60,7 +60,7 @@
 
 -(void)loadGoogle
 {
-    NSURLRequest *req = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://google.com/"]];
+    NSURLRequest *req = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://www.github.com"]];
     [_webView loadRequest:req];
 }
 

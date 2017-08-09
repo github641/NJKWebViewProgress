@@ -4,6 +4,10 @@
 //  Created by Satoshi Aasanoon 11/16/13.
 //  Copyright (c) 2013 Satoshi Asano. All rights reserved.
 //
+/* lzy注170809：
+ 这个『进度条』，是一个UIView。
+ 是通过『做动画修改』修改UIView.frame来模拟的
+ */
 
 #import "NJKWebViewProgressView.h"
 
@@ -27,9 +31,13 @@
 -(void)configureViews
 {
     self.userInteractionEnabled = NO;
+    
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
     _progressBarView = [[UIView alloc] initWithFrame:self.bounds];
+    
     _progressBarView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    
     UIColor *tintColor = [UIColor colorWithRed:22.f / 255.f green:126.f / 255.f blue:251.f / 255.f alpha:1.0]; // iOS7 Safari bar color
     if ([UIApplication.sharedApplication.delegate.window respondsToSelector:@selector(setTintColor:)] && UIApplication.sharedApplication.delegate.window.tintColor) {
         tintColor = UIApplication.sharedApplication.delegate.window.tintColor;
@@ -49,14 +57,14 @@
 
 - (void)setProgress:(float)progress animated:(BOOL)animated
 {
-    BOOL isGrowing = progress > 0.0;
+    BOOL isGrowing = progress > 0.0;// 根据progress的比例改变width
     [UIView animateWithDuration:(isGrowing && animated) ? _barAnimationDuration : 0.0 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         CGRect frame = _progressBarView.frame;
         frame.size.width = progress * self.bounds.size.width;
         _progressBarView.frame = frame;
     } completion:nil];
 
-    if (progress >= 1.0) {
+    if (progress >= 1.0) {// 完成的话，先让颜色渐变为透明，然后该UIView的width为0
         [UIView animateWithDuration:animated ? _fadeAnimationDuration : 0.0 delay:_fadeOutDelay options:UIViewAnimationOptionCurveEaseInOut animations:^{
             _progressBarView.alpha = 0.0;
         } completion:^(BOOL completed){
@@ -65,7 +73,7 @@
             _progressBarView.frame = frame;
         }];
     }
-    else {
+    else {// 其他情况，直接设置view的alpha不透明
         [UIView animateWithDuration:animated ? _fadeAnimationDuration : 0.0 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             _progressBarView.alpha = 1.0;
         } completion:nil];
